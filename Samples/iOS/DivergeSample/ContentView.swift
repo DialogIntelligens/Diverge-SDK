@@ -1,6 +1,6 @@
-import SwiftUI
 import DivergeSDK
 import DivergeSDKUI
+import SwiftUI
 
 struct ContentView: View {
     @State private var apiKey = "sk_sandbox_demo"

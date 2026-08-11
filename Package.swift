@@ -6,7 +6,7 @@ let package = Package(
     platforms: [
         .iOS(.v15),
         // macOS supports core + tests/DocC without a simulator.
-        .macOS(.v13),
+        .macOS(.v13)
     ],
     products: [
         .library(
@@ -16,21 +16,21 @@ let package = Package(
         .library(
             name: "DivergeSDKUI",
             targets: ["DivergeSDKUI"]
-        ),
+        )
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.3.0"),
-        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.17.0"),
+        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.17.0")
     ],
     targets: [
         .target(
             name: "DivergeSDK",
             path: "Sources/DivergeSDK",
             resources: [
-                .copy("PrivacyInfo.xcprivacy"),
+                .copy("PrivacyInfo.xcprivacy")
             ],
             swiftSettings: [
-                .swiftLanguageMode(.v6),
+                .swiftLanguageMode(.v6)
             ]
         ),
         .target(
@@ -38,7 +38,7 @@ let package = Package(
             dependencies: ["DivergeSDK"],
             path: "Sources/DivergeSDKUI",
             swiftSettings: [
-                .swiftLanguageMode(.v6),
+                .swiftLanguageMode(.v6)
             ]
         ),
         .testTarget(
@@ -46,12 +46,12 @@ let package = Package(
             dependencies: [
                 "DivergeSDK",
                 "DivergeSDKUI",
-                .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
+                .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
             ],
             path: "Tests/DivergeSDKTests",
             swiftSettings: [
-                .swiftLanguageMode(.v6),
+                .swiftLanguageMode(.v6)
             ]
-        ),
+        )
     ]
 )

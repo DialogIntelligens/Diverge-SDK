@@ -51,7 +51,11 @@ Open `Package.swift` or `Samples/iOS/DivergeSample.xcodeproj` in Xcode for simul
 - Open PRs against `main`.
 - Keep changes focused; include tests when behavior changes.
 - Fill in the PR template when present.
-- Path-filtered CI runs only the platforms you touch.
+- **CI runs on every push and every PR commit** (all branches) via [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
+  - Always: `VERSION` sync check
+  - Path-filtered: iOS and/or Android jobs
+  - Require the aggregate check **CI / CI** in branch protection
+- DocC remains a separate path-filtered workflow.
 
 ## Releases
 

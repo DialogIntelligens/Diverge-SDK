@@ -49,8 +49,30 @@ for asset in css js data img images index downloads videos; do
   fi
 done
 
-mkdir -p "$SITE_DIST/_doccarchives"
-cp -R "$DOCS_OUT/DivergeSDK.doccarchive" "$SITE_DIST/_doccarchives/"
-cp -R "$DOCS_OUT/DivergeSDKUI.doccarchive" "$SITE_DIST/_doccarchives/"
+# Raw .doccarchive trees are kept under docs-out/ for local use only.
+# Do not copy them into site-dist — they duplicate data/ and include the same
+# operator-symbol filenames that break GitHub Actions artifact uploads.
+
+# GitHub Actions artifacts / Pages reject NTFS-illegal path characters.
+# DocC names some operator overloads with ':' (e.g. !=(_:_:).json).
+SITE_DIST="$SITE_DIST" python3 - <<'PY'
+import os
+from pathlib import Path
+
+illegal = set('":<>|*?\r\n')
+root = Path(os.environ["SITE_DIST"])
+removed = []
+for path in root.rglob("*"):
+    if path.is_file() and any(ch in path.name for ch in illegal):
+        removed.append(path.relative_to(root).as_posix())
+        path.unlink()
+print(f"Removed {len(removed)} artifact-incompatible DocC file(s)")
+for rel in removed[:20]:
+    print(f"  - {rel}")
+if len(removed) > 20:
+    print(f"  … and {len(removed) - 20} more")
+PY
 
 echo "Site assembled at $SITE_DIST"
+# Archives remain available locally for inspection:
+echo "DocC archives (local only): $DOCS_OUT"

@@ -1,34 +1,6 @@
 name: iOS
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "Sources/**"
-      - "Tests/**"
-      - "Package.swift"
-      - "Package.resolved"
-      - "Samples/iOS/**"
-      - ".swiftlint.yml"
-      - ".swiftformat"
-      - ".github/workflows/ios.yml"
-      - ".github/actions/**"
-      - "VERSION"
-      - "scripts/**"
-  pull_request:
-    branches: [main]
-    paths:
-      - "Sources/**"
-      - "Tests/**"
-      - "Package.swift"
-      - "Package.resolved"
-      - "Samples/iOS/**"
-      - ".swiftlint.yml"
-      - ".swiftformat"
-      - ".github/workflows/ios.yml"
-      - ".github/actions/**"
-      - "VERSION"
-      - "scripts/**"
   workflow_call:
   workflow_dispatch:
 

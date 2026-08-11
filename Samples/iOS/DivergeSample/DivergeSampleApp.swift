@@ -1,5 +1,5 @@
-import SwiftUI
 import DivergeSDK
+import SwiftUI
 
 @main
 struct DivergeSampleApp: App {

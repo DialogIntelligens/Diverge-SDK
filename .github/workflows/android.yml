@@ -1,20 +1,6 @@
 name: Android
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - "android/**"
-      - "VERSION"
-      - "scripts/**"
-      - ".github/workflows/android.yml"
-  pull_request:
-    branches: [main]
-    paths:
-      - "android/**"
-      - "VERSION"
-      - "scripts/**"
-      - ".github/workflows/android.yml"
   workflow_call:
   workflow_dispatch:
 

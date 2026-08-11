@@ -7,11 +7,13 @@ import Foundation
 /// `configure` and `shared` are synchronized with a lock; call `configure` once at app launch.
 public enum Diverge {
     /// Semantic version of this SDK build (from the repo `VERSION` file).
-    public static var version: String { VersionInfo.current }
+    public static var version: String {
+        VersionInfo.current
+    }
 
     private static let lock = NSLock()
-    // Synchronized via `lock`; marked unsafe for Swift 6 global mutable state checking.
-    nonisolated(unsafe) private static var _shared: DivergeClient?
+    /// Synchronized via `lock`; marked unsafe for Swift 6 global mutable state checking.
+    private nonisolated(unsafe) static var _shared: DivergeClient?
 
     /// The shared client after a successful ``configure(_:)``.
     /// - Throws: ``DivergeError/notConfigured`` if configure was never called.

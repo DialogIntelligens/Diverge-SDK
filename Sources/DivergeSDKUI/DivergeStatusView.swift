@@ -1,5 +1,5 @@
-import SwiftUI
 import DivergeSDK
+import SwiftUI
 
 /// Lightweight status view showing SDK version and configured environment.
 ///
@@ -44,7 +44,7 @@ public struct DivergeStatusView: View {
     public nonisolated static func accessibilityDump(client: DivergeClient?) -> String {
         var lines = [
             "title: Diverge SDK",
-            "version: \(Diverge.version)",
+            "version: \(Diverge.version)"
         ]
         if let client {
             lines.append("environment: \(client.configuration.environment.rawValue)")

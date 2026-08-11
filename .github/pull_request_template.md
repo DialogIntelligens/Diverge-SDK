@@ -8,4 +8,4 @@ name: Pull Request
 
 - [ ] CHANGELOG.md updated if user-facing
 - [ ] Tests added/updated where appropriate
-- [ ] iOS and/or Android CI green for touched platforms
+- [ ] **CI / CI** check is green (runs on every commit)
