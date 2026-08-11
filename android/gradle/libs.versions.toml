@@ -1,6 +1,6 @@
 [versions]
 agp = "8.7.3"
-kotlin = "2.0.21"
+kotlin = "2.4.10"
 # Dokka 1.9 — see Dev-Docs/android/DOKKA.md before bumping to Dokka 2.
 dokka = "1.9.20"
 coreKtx = "1.15.0"
