@@ -1,0 +1,69 @@
+# Xcode
+build/
+DerivedData/
+*.xcuserstate
+*.xcuserdata/
+**/xcuserdata/
+*.xccheckout
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+timeline.xctimeline
+playground.xcworkspace
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Packages/
+# Package.resolved is committed so DocC / CI plugin versions stay reproducible.
+!default.xcworkspace
+
+# Android / Gradle
+android/.gradle/
+android/build/
+android/**/build/
+android/local.properties
+android/**/captures/
+android/**/.cxx/
+android/**/out/
+android/**/paparazzi/failures/
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+
+# IDEs
+.idea/
+*.iml
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+*.swp
+*~
+
+# DocC / docs artifacts
+docs-out/
+site-dist/
+.docc-build/
+*.doccarchive
+
+# Secrets / env
+.env
+.env.*
+*.jks
+*.keystore
+secrets/
+
+Dev-Docs/

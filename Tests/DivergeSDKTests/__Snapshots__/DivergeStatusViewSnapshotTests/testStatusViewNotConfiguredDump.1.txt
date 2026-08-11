@@ -1,0 +1,3 @@
+title: Diverge SDK
+version: 0.1.0
+state: not-configured

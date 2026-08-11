@@ -1,0 +1,33 @@
+name: Select Xcode
+description: Select a preferred Xcode version with fallback to the newest installed 16.x / any Xcode.
+
+inputs:
+  preferred-version:
+    description: Preferred Xcode app name without .app (e.g. Xcode_16.2)
+    required: false
+    default: Xcode_16.2
+
+runs:
+  using: composite
+  steps:
+    - name: Select Xcode
+      shell: bash
+      run: |
+        set -euo pipefail
+        preferred="/Applications/${{ inputs.preferred-version }}.app"
+        if [[ -d "$preferred" ]]; then
+          sudo xcode-select -s "$preferred/Contents/Developer"
+        else
+          candidate="$(ls -d /Applications/Xcode_16*.app 2>/dev/null | sort -V | tail -1 || true)"
+          if [[ -z "$candidate" ]]; then
+            candidate="$(ls -d /Applications/Xcode*.app 2>/dev/null | sort -V | tail -1)"
+          fi
+          if [[ -z "$candidate" ]]; then
+            echo "No Xcode.app found under /Applications" >&2
+            exit 1
+          fi
+          echo "Using Xcode at $candidate"
+          sudo xcode-select -s "$candidate/Contents/Developer"
+        fi
+        xcodebuild -version
+        swift --version

@@ -1,0 +1,78 @@
+name: Resolve iOS Simulator destination
+description: Pick an available iPhone simulator destination for xcodebuild.
+
+inputs:
+  scheme:
+    description: Xcode scheme name (used only for logging)
+    required: false
+    default: DivergeSDK
+  project:
+    description: Optional -project argument (path to .xcodeproj). Leave empty for Swift packages.
+    required: false
+    default: ""
+
+outputs:
+  destination:
+    description: xcodebuild -destination value
+    value: ${{ steps.resolve.outputs.destination }}
+
+runs:
+  using: composite
+  steps:
+    - name: Resolve destination
+      id: resolve
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        list_args=()
+        if [[ -n "${{ inputs.project }}" ]]; then
+          list_args+=(-project "${{ inputs.project }}")
+        fi
+        list_args+=(-scheme "${{ inputs.scheme }}" -showdestinations)
+
+        echo "Resolving destinations for scheme ${{ inputs.scheme }}..."
+        xcodebuild "${list_args[@]}" 2>/dev/null | tee /tmp/xcode-destinations.txt || true
+
+        # Prefer an available iPhone simulator with an id=
+        DEST="$(
+          awk -F'[{}]' '
+            /platform:iOS Simulator/ && /name:iPhone/ && /id:/ {
+              gsub(/^ +| +$/, "", $2)
+              print $2
+              exit
+            }
+          ' /tmp/xcode-destinations.txt
+        )"
+
+        if [[ -z "$DEST" ]]; then
+          # Fallback: first booted or available iPhone from simctl
+          UDID="$(xcrun simctl list devices available -j | python3 -c '
+import json,sys
+data=json.load(sys.stdin)
+for runtime, devices in data.get("devices", {}).items():
+    if "iOS" not in runtime:
+        continue
+    for d in devices:
+        if d.get("isAvailable") and "iPhone" in d.get("name",""):
+            print(d["udid"]); sys.exit(0)
+' 2>/dev/null || true)"
+          if [[ -n "$UDID" ]]; then
+            DEST="platform=iOS Simulator,id=${UDID}"
+          else
+            DEST="platform=iOS Simulator,name=iPhone 16"
+          fi
+        else
+          # $DEST is like: platform:iOS Simulator, id:XXXX, name:iPhone 16, OS:18.2
+          # Convert to xcodebuild destination form using id when present
+          ID="$(echo "$DEST" | sed -n 's/.*id:\([^,]*\).*/\1/p' | tr -d ' ')"
+          if [[ -n "$ID" ]]; then
+            DEST="platform=iOS Simulator,id=${ID}"
+          else
+            NAME="$(echo "$DEST" | sed -n 's/.*name:\([^,]*\).*/\1/p' | sed 's/^ *//;s/ *$//')"
+            DEST="platform=iOS Simulator,name=${NAME:-iPhone 16}"
+          fi
+        fi
+
+        echo "destination=${DEST}" >> "$GITHUB_OUTPUT"
+        echo "Using destination: ${DEST}"
