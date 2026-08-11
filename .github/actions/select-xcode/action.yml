@@ -1,11 +1,13 @@
 name: Select Xcode
-description: Select a preferred Xcode version with fallback to the newest installed 16.x / any Xcode.
+description: Select a preferred Xcode version with fallback to the newest installed Xcode.
 
 inputs:
   preferred-version:
-    description: Preferred Xcode app name without .app (e.g. Xcode_16.2)
+    description: Preferred Xcode app name without .app (e.g. Xcode_16.4)
     required: false
-    default: Xcode_16.2
+    # 16.4 is the macos-15 default with preinstalled iOS simulators.
+    # 16.2 often lacks the matching iOS platform on current runner images.
+    default: Xcode_16.4
 
 runs:
   using: composite
@@ -26,8 +28,10 @@ runs:
             echo "No Xcode.app found under /Applications" >&2
             exit 1
           fi
-          echo "Using Xcode at $candidate"
+          echo "Preferred ${{ inputs.preferred-version }} missing; using $candidate"
           sudo xcode-select -s "$candidate/Contents/Developer"
         fi
+        # Warm CoreSimulator early (avoids flaky "Unable to connect to simulator").
+        xcrun simctl list >/dev/null 2>&1 || true
         xcodebuild -version
         swift --version

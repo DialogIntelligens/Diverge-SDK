@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- iOS CI: prefer Xcode 16.4 (preinstalled simulators), warm CoreSimulator before probes, and soft-fail flaky `downloadPlatform` instead of hard-failing with exit 70
+
 ## [0.1.0] - 2026-08-11
 
 ### Added
