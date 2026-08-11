@@ -1,51 +1,43 @@
 #!/usr/bin/env bash
-# Local pre-commit checks for Diverge SDK.
+# Local pre-commit: run the same checks as GitHub Actions for touched platforms.
 # Installed via: ./scripts/install-git-hooks.sh  (or: make install-hooks)
+#
+# Escape hatch: DIVERGE_SKIP_LOCAL_CI=1 git commit -m "..."
 set -euo pipefail
 
 ROOT="$(git rev-parse --show-toplevel)"
 cd "$ROOT"
 
-echo "==> pre-commit: version sync"
-./scripts/check-version.sh
+if [[ "${DIVERGE_SKIP_LOCAL_CI:-}" == "1" ]]; then
+  echo "==> pre-commit: skipped (DIVERGE_SKIP_LOCAL_CI=1)"
+  exit 0
+fi
 
 STAGED="$(git diff --cached --name-only --diff-filter=ACMR || true)"
 
-needs_swift=0
+# Path filters aligned with .github/workflows/ios.yml / android.yml
+needs_ios=0
 needs_android=0
-if printf '%s\n' "$STAGED" | grep -qE '\.swift$|^Package\.swift$|^\.swiftlint\.yml$|^\.swiftformat$'; then
-  needs_swift=1
+
+if printf '%s\n' "$STAGED" | grep -qE \
+  '^(Sources/|Tests/|Package\.swift|Package\.resolved|Samples/iOS/|\.swiftlint\.yml|\.swiftformat|VERSION|scripts/)'; then
+  needs_ios=1
 fi
-if printf '%s\n' "$STAGED" | grep -qE '^android/'; then
+
+if printf '%s\n' "$STAGED" | grep -qE \
+  '^(android/|VERSION|scripts/)'; then
   needs_android=1
 fi
 
-if [[ "$needs_swift" -eq 1 ]]; then
-  echo "==> pre-commit: SwiftLint"
-  if ! command -v swiftlint >/dev/null 2>&1; then
-    echo "error: swiftlint not found. Install with: brew install swiftlint" >&2
-    exit 1
-  fi
-  swiftlint lint --strict
-
-  echo "==> pre-commit: SwiftFormat"
-  if ! command -v swiftformat >/dev/null 2>&1; then
-    echo "error: swiftformat not found. Install with: brew install swiftformat" >&2
-    exit 1
-  fi
-  swiftformat --lint .
-fi
-
-if [[ "$needs_android" -eq 1 ]]; then
-  echo "==> pre-commit: Android lint (library)"
-  if [[ -z "${ANDROID_HOME:-}" && -z "${ANDROID_SDK_ROOT:-}" ]]; then
-    echo "error: ANDROID_HOME not set; required when committing android/ changes" >&2
-    exit 1
-  fi
-  (
-    cd android
-    ./gradlew :diverge-sdk:lint :sample:compileDebugUnitTestKotlin --quiet
-  )
+if [[ "$needs_ios" -eq 1 && "$needs_android" -eq 1 ]]; then
+  ./scripts/ci-local.sh all
+elif [[ "$needs_ios" -eq 1 ]]; then
+  ./scripts/ci-local.sh ios
+elif [[ "$needs_android" -eq 1 ]]; then
+  ./scripts/ci-local.sh android
+else
+  echo "==> pre-commit: no iOS/Android paths staged — version check only"
+  ./scripts/ci-local.sh version
 fi
 
 echo "==> pre-commit: ok"

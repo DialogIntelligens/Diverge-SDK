@@ -4,18 +4,28 @@ Thanks for contributing. This guide covers the scaffold-era workflow; expand it 
 
 ## Development setup
 
-Install local Git hooks once (runs on every `git commit`):
+Install local Git hooks once (runs **full local CI** on every `git commit` for touched platforms):
 
 ```bash
 make install-hooks
 # or: ./scripts/install-git-hooks.sh
 ```
 
-The pre-commit hook runs:
+The pre-commit hook mirrors GitHub Actions:
 
-- `./scripts/check-version.sh` (always)
-- SwiftLint + SwiftFormat when Swift / Package files are staged
-- Android lint + sample unit-test compile when `android/` is staged
+- Always: `./scripts/check-version.sh`
+- iOS paths staged → same as `.github/workflows/ios.yml` (SwiftLint, SwiftFormat, `xcodebuild test` on `DivergeSDK-Package`, sample build)
+- Android paths staged → same as `.github/workflows/android.yml` (assemble, test, lint, Dokka, release minify, R8 keeps)
+
+Run without committing:
+
+```bash
+make ci-local          # both platforms
+make ci-local-ios
+make ci-local-android
+```
+
+Skip once: `DIVERGE_SKIP_LOCAL_CI=1 git commit -m "..."`.
 
 Common commands (also see `make help`):
 
@@ -64,8 +74,8 @@ Open `Package.swift` or `Samples/iOS/DivergeSample.xcodeproj` in Xcode for simul
 - Open PRs against `main`.
 - Keep changes focused; include tests when behavior changes.
 - Fill in the PR template when present.
-- **Local:** `make install-hooks` then every `git commit` runs pre-commit checks (version + lint).
-- **Remote:** path-filtered GitHub Actions (`iOS`, `Android`, `DocC`) on push/PR — not an aggregate “CI / CI” gate.
+- **Local:** `make install-hooks` then every `git commit` runs full local CI for touched platforms (`scripts/ci-local.sh`, mirrors GitHub iOS/Android).
+- **Remote:** path-filtered GitHub Actions (`iOS`, `Android`, `DocC`) on push/PR.
 
 ## Releases
 

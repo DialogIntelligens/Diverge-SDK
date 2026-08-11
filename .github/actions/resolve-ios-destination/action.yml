@@ -5,7 +5,7 @@ inputs:
   scheme:
     description: Xcode scheme name (used only for logging)
     required: false
-    default: DivergeSDK
+    default: DivergeSDK-Package
   project:
     description: Optional -project argument (path to .xcodeproj). Leave empty for Swift packages.
     required: false

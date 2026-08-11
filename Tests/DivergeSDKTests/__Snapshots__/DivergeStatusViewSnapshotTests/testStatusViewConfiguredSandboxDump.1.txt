@@ -1,4 +1,0 @@
-title: Diverge SDK
-version: 0.1.0
-environment: sandbox
-apiBaseURL: https://sandbox.api.askdiverge.ai

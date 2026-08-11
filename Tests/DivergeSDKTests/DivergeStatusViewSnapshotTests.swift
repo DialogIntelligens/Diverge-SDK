@@ -1,9 +1,8 @@
-import SnapshotTesting
 import XCTest
 @_spi(Testing) import DivergeSDK
 import DivergeSDKUI
 
-/// Text dumps stay stable across macOS/`swift test` and iOS Simulator CI.
+/// Accessibility dump contract for VoiceOver — kept as exact string equality.
 final class DivergeStatusViewSnapshotTests: XCTestCase {
     override func tearDown() {
         Diverge.reset()
@@ -12,10 +11,12 @@ final class DivergeStatusViewSnapshotTests: XCTestCase {
 
     func testStatusViewNotConfiguredDump() {
         let dump = DivergeStatusView.accessibilityDump(client: nil)
-        XCTAssertTrue(dump.contains("title: Diverge SDK"))
-        XCTAssertTrue(dump.contains("version: \(Diverge.version)"))
-        XCTAssertTrue(dump.contains("state: not-configured"))
-        assertSnapshot(of: dump, as: .lines)
+        let expected = [
+            "title: Diverge SDK",
+            "version: \(Diverge.version)",
+            "state: not-configured"
+        ].joined(separator: "\n")
+        XCTAssertEqual(dump, expected)
     }
 
     func testStatusViewConfiguredSandboxDump() throws {
@@ -23,10 +24,14 @@ final class DivergeStatusViewSnapshotTests: XCTestCase {
             Configuration(apiKey: "sk_test_snapshot", environment: .sandbox)
         )
         let dump = DivergeStatusView.accessibilityDump(client: client)
-        XCTAssertTrue(dump.contains("environment: sandbox"))
-        XCTAssertTrue(dump.contains("apiBaseURL: https://sandbox.api.askdiverge.ai"))
+        let expected = [
+            "title: Diverge SDK",
+            "version: \(Diverge.version)",
+            "environment: sandbox",
+            "apiBaseURL: https://sandbox.api.askdiverge.ai"
+        ].joined(separator: "\n")
+        XCTAssertEqual(dump, expected)
         XCTAssertFalse(dump.contains("sk_test_snapshot"), "API key must not appear in a11y dump")
-        assertSnapshot(of: dump, as: .lines)
     }
 
     func testStatusViewAccessibilityLabelsArePresentInViewHierarchy() {

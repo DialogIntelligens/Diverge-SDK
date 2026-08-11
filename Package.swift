@@ -19,8 +19,7 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.3.0"),
-        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.17.0")
+        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.3.0")
     ],
     targets: [
         .target(
@@ -45,8 +44,7 @@ let package = Package(
             name: "DivergeSDKTests",
             dependencies: [
                 "DivergeSDK",
-                "DivergeSDKUI",
-                .product(name: "SnapshotTesting", package: "swift-snapshot-testing")
+                "DivergeSDKUI"
             ],
             path: "Tests/DivergeSDKTests",
             swiftSettings: [

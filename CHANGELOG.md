@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Public API: `Configuration`, `Environment`, `DivergeClient`, `Diverge.configure` / `shared` (iOS + Android)
 - `DivergeStatusView` + sample apps with sandbox configure flow
 - Separate `DivergeSDKUI` SPM product so core `DivergeSDK` does not depend on SwiftUI
-- Swift 6 language mode; SnapshotTesting (iOS/macOS) and Paparazzi goldens (Android, enforced in CI)
+- Swift 6 language mode; accessibility dump contract tests (iOS/macOS) and Paparazzi goldens (Android, enforced in CI)
 - Narrow ProGuard consumer rules; `:sample:verifyR8PublicApiKeeps` mapping check after release minify
 - Maven Central publish-ready wiring (signing + Central Portal staging) — see `Dev-Docs/releases/MAVEN_CENTRAL.md`
 - DocC for `DivergeSDK` + `DivergeSDKUI`; GitHub Pages site assembly (`scripts/build-docs-site.sh`)

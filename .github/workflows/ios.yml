@@ -63,18 +63,18 @@ jobs:
       - name: Resolve package
         run: |
           swift package resolve
-          xcodebuild -list -scheme DivergeSDK || xcodebuild -list
+          xcodebuild -list -scheme DivergeSDK-Package || xcodebuild -list
 
       - name: Resolve package test destination
         id: pkg-dest
         uses: ./.github/actions/resolve-ios-destination
         with:
-          scheme: DivergeSDK
+          scheme: DivergeSDK-Package
 
-      - name: iOS Simulator tests
+      - name: Package tests (iOS Simulator)
         run: |
           xcodebuild test \
-            -scheme DivergeSDK \
+            -scheme DivergeSDK-Package \
             -destination "${{ steps.pkg-dest.outputs.destination }}" \
             -skipPackagePluginValidation \
             CODE_SIGNING_ALLOWED=NO
