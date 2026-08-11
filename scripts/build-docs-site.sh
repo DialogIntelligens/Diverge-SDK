@@ -54,23 +54,48 @@ done
 # operator-symbol filenames that break GitHub Actions artifact uploads.
 
 # GitHub Actions artifacts / Pages reject NTFS-illegal path characters.
-# DocC names some operator overloads with ':' (e.g. !=(_:_:).json).
+# DocC names some operator overloads with ':' in *directory* and file names
+# (e.g. documentation/.../!=(_:_:)/index.html).
 SITE_DIST="$SITE_DIST" python3 - <<'PY'
 import os
+import shutil
 from pathlib import Path
 
 illegal = set('":<>|*?\r\n')
 root = Path(os.environ["SITE_DIST"])
+
+
+def path_has_illegal(rel: Path) -> bool:
+    return any(any(ch in part for ch in illegal) for part in rel.parts)
+
+
 removed = []
-for path in root.rglob("*"):
-    if path.is_file() and any(ch in path.name for ch in illegal):
-        removed.append(path.relative_to(root).as_posix())
-        path.unlink()
-print(f"Removed {len(removed)} artifact-incompatible DocC file(s)")
-for rel in removed[:20]:
+
+# Remove files whose relative path contains an illegal component.
+for path in list(root.rglob("*")):
+    if not path.is_file():
+        continue
+    rel = path.relative_to(root)
+    if path_has_illegal(rel):
+        removed.append(rel.as_posix())
+        path.unlink(missing_ok=True)
+
+# Remove directories with illegal names (deepest first).
+dirs = [
+    p for p in root.rglob("*")
+    if p.is_dir() and any(ch in p.name for ch in illegal)
+]
+dirs.sort(key=lambda p: len(p.parts), reverse=True)
+for directory in dirs:
+    if directory.exists():
+        removed.append(directory.relative_to(root).as_posix() + "/")
+        shutil.rmtree(directory, ignore_errors=True)
+
+print(f"Removed {len(removed)} artifact-incompatible DocC path(s)")
+for rel in removed[:30]:
     print(f"  - {rel}")
-if len(removed) > 20:
-    print(f"  … and {len(removed) - 20} more")
+if len(removed) > 30:
+    print(f"  … and {len(removed) - 30} more")
 PY
 
 echo "Site assembled at $SITE_DIST"

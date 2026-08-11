@@ -1,7 +1,8 @@
-.PHONY: help sync-version check-version ios-test ios-lint android-build android-test android-paparazzi-record docs-docc sample-ios-open
+.PHONY: help sync-version check-version ios-test ios-lint android-build android-test android-paparazzi-record docs-docc sample-ios-open install-hooks
 
 help:
 	@echo "Diverge SDK make targets:"
+	@echo "  make install-hooks  - Enable local pre-commit Git hooks"
 	@echo "  make sync-version   - Write VERSION into generated sources/docs"
 	@echo "  make check-version  - Fail if VERSION drifts from synced files"
 	@echo "  make ios-test       - Run Swift package tests (macOS host)"
@@ -11,6 +12,9 @@ help:
 	@echo "  make android-paparazzi-record - Record Android UI snapshots"
 	@echo "  make docs-docc      - Build DocC (SDK+UI) + Docs/site into site-dist/"
 	@echo "  make sample-ios-open - Open the iOS sample in Xcode"
+
+install-hooks:
+	./scripts/install-git-hooks.sh
 
 sync-version:
 	./scripts/sync-version.sh

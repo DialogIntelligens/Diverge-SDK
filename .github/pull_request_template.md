@@ -8,4 +8,5 @@ name: Pull Request
 
 - [ ] CHANGELOG.md updated if user-facing
 - [ ] Tests added/updated where appropriate
-- [ ] **CI / CI** check is green (runs on every commit)
+- [ ] Local pre-commit hooks installed (`make install-hooks`) and clean
+- [ ] iOS / Android / DocC workflows green for touched platforms

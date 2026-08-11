@@ -4,6 +4,19 @@ Thanks for contributing. This guide covers the scaffold-era workflow; expand it 
 
 ## Development setup
 
+Install local Git hooks once (runs on every `git commit`):
+
+```bash
+make install-hooks
+# or: ./scripts/install-git-hooks.sh
+```
+
+The pre-commit hook runs:
+
+- `./scripts/check-version.sh` (always)
+- SwiftLint + SwiftFormat when Swift / Package files are staged
+- Android lint + sample unit-test compile when `android/` is staged
+
 Common commands (also see `make help`):
 
 ```bash
@@ -51,11 +64,8 @@ Open `Package.swift` or `Samples/iOS/DivergeSample.xcodeproj` in Xcode for simul
 - Open PRs against `main`.
 - Keep changes focused; include tests when behavior changes.
 - Fill in the PR template when present.
-- **CI runs on every push and every PR commit** (all branches) via [`.github/workflows/ci.yml`](.github/workflows/ci.yml).
-  - Always: `VERSION` sync check
-  - Path-filtered: iOS and/or Android jobs
-  - Require the aggregate check **CI / CI** in branch protection
-- DocC remains a separate path-filtered workflow.
+- **Local:** `make install-hooks` then every `git commit` runs pre-commit checks (version + lint).
+- **Remote:** path-filtered GitHub Actions (`iOS`, `Android`, `DocC`) on push/PR — not an aggregate “CI / CI” gate.
 
 ## Releases
 
