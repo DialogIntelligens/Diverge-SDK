@@ -65,13 +65,21 @@ jobs:
           swift package resolve
           xcodebuild -list -scheme DivergeSDK-Package || xcodebuild -list
 
+      # Runner images sometimes ship Xcode without the matching iOS platform.
+      # Package tests can fall back to macOS; the sample build needs a real Simulator.
+      - name: Ensure iOS Simulator platform
+        uses: ./.github/actions/ensure-ios-platform
+        with:
+          scheme: DivergeSDK-Package
+
       - name: Resolve package test destination
         id: pkg-dest
         uses: ./.github/actions/resolve-ios-destination
         with:
           scheme: DivergeSDK-Package
+          allow-macos: "true"
 
-      - name: Package tests (iOS Simulator)
+      - name: Package tests
         run: |
           xcodebuild test \
             -scheme DivergeSDK-Package \

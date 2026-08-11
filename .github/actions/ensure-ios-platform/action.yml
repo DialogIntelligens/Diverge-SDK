@@ -1,0 +1,35 @@
+name: Ensure iOS Simulator platform
+description: Download the iOS platform if xcodebuild has no iPhone Simulator destinations for the scheme.
+
+inputs:
+  scheme:
+    description: Scheme used to probe destinations
+    required: false
+    default: DivergeSDK-Package
+  project:
+    description: Optional -project path
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Ensure iOS platform
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        list_args=()
+        if [[ -n "${{ inputs.project }}" ]]; then
+          list_args+=(-project "${{ inputs.project }}")
+        fi
+        list_args+=(-scheme "${{ inputs.scheme }}" -showdestinations)
+
+        if xcodebuild "${list_args[@]}" 2>/dev/null | grep -E 'platform:iOS Simulator' | grep -q 'name:iPhone'; then
+          echo "iOS Simulator destinations already available."
+          exit 0
+        fi
+
+        echo "No iPhone Simulator destinations; downloading iOS platform..."
+        xcodebuild -downloadPlatform iOS
+        echo "iOS platform download finished."
