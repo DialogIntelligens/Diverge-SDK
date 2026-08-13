@@ -47,7 +47,7 @@ Android modules read `VERSION` at Gradle configure time (no sync step required f
 
 ### iOS
 
-1. Install Xcode 16+ and Command Line Tools.
+1. Install Xcode 26+ and Command Line Tools.
 2. Optional: [SwiftLint](https://github.com/realm/SwiftLint) and [SwiftFormat](https://github.com/nicklockwood/SwiftFormat).
 3. From the repo root:
 
@@ -106,4 +106,4 @@ The library and tests use Swift 6 language mode. Keep new API `Sendable`-safe; `
 
 ## License
 
-By contributing, you agree that your contributions are licensed under the MIT License.
+By contributing, you agree that your contributions are licensed under the Apache License, Version 2.0.

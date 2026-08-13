@@ -7,11 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed
-
-- iOS CI: prefer Xcode 16.4 (preinstalled simulators), warm CoreSimulator before probes, and soft-fail flaky `downloadPlatform` instead of hard-failing with exit 70
-
-## [0.1.0] - 2026-08-11
+## [0.1.0] - 2026-08-13
 
 ### Added
 
@@ -29,8 +25,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Relicensed from MIT to Apache License, Version 2.0
+- Android `DivergeStatusView` builds UI programmatically (removed SDK layout XML)
+- Minimum iOS deployment target raised from 15.0 to **18.0**
+- iOS / DocC CI runs on `macos-26` and selects the newest installed Xcode (no longer pins 16.4)
+- Documented Android minSdk 24 policy (no desugar/joda-style backports)
 - Snapshots use stable accessibility text dumps (cross-platform); Paparazzi PNGs committed and verified
 - `Diverge.reset` is `@_spi(Testing)` on iOS; API keys redacted in `Configuration` descriptions
 - Removed always-true `DivergeClient.isConfigured`; use `Diverge.isConfigured`
 - Android session state uses `AtomicReference`; `Environment.wireName` aligns with iOS raw values
 - `DivergeError` / `DivergeException` user-facing messages; keep `Environment` class name under R8
+
+### Fixed
+
+- iOS CI: warm CoreSimulator before probes, and soft-fail flaky `downloadPlatform` instead of hard-failing with exit 70

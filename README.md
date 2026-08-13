@@ -2,16 +2,18 @@
 
 Open-source ecommerce SDK for **iOS** (Swift Package Manager) and **Android** (local module today; Maven Central pending).
 
+This repository is a **monorepo**: both platforms share one tree, one `VERSION`, and one SemVer GitHub Release cadence. Path-filtered CI runs only the platform(s) touched by a change.
+
 Configure with a sandbox or production API key, then use the shared client for environment and version introspection.
 
 ## Requirements
 
 | Platform | Minimum |
 |----------|---------|
-| iOS | 15.0+ |
+| iOS | 18.0+ |
 | Android | API 24+ |
-| Swift | 6.0 language mode (Xcode 16+) |
-| Xcode | 16+ |
+| Swift | 6.0 language mode (Xcode 26+) |
+| Xcode | 26+ |
 
 ## Installation
 
@@ -23,7 +25,7 @@ dependencies: [
 ]
 ```
 
-Add products `DivergeSDK` (required) and `DivergeSDKUI` (optional status UI).
+Add products `DivergeSDK` (required) and `DivergeSDKUI` (optional status UI). Prefer version pins from GitHub Releases — do not track `main` for production apps.
 
 ```swift
 import DivergeSDK
@@ -76,6 +78,7 @@ Single source of truth: the root [`VERSION`](VERSION) file. After changing it, r
 - Getting started / ATT: [`Docs/site/`](Docs/site/)
 - Integration baseline: [`Docs/integration/v0.1.0.md`](Docs/integration/v0.1.0.md)
 - Engineering (a11y checklists, privacy templates, Maven publish): [`Dev-Docs/`](Dev-Docs/)
+- Android module notes: [`android/README.md`](android/README.md)
 
 ## Samples
 
@@ -97,4 +100,4 @@ make android-paparazzi-record   # requires Android SDK; commit PNGs after
 
 ## License
 
-[MIT](LICENSE.md) — Copyright © 2026 Diverge
+[Apache-2.0](LICENSE.md) — Copyright © 2026 Diverge

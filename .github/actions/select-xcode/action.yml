@@ -1,13 +1,11 @@
 name: Select Xcode
-description: Select a preferred Xcode version with fallback to the newest installed Xcode.
+description: Select the newest installed stable Xcode (prefer Xcode_26* over preview builds).
 
 inputs:
   preferred-version:
-    description: Preferred Xcode app name without .app (e.g. Xcode_16.4)
+    description: Optional preferred Xcode app name without .app (e.g. Xcode_26.6). When empty, pick newest installed.
     required: false
-    # 16.4 is the macos-15 default with preinstalled iOS simulators.
-    # 16.2 often lacks the matching iOS platform on current runner images.
-    default: Xcode_16.4
+    default: ""
 
 runs:
   using: composite
@@ -16,21 +14,35 @@ runs:
       shell: bash
       run: |
         set -euo pipefail
-        preferred="/Applications/${{ inputs.preferred-version }}.app"
-        if [[ -d "$preferred" ]]; then
-          sudo xcode-select -s "$preferred/Contents/Developer"
-        else
-          candidate="$(ls -d /Applications/Xcode_16*.app 2>/dev/null | sort -V | tail -1 || true)"
+
+        pick_newest() {
+          # Prefer stable Xcode_N* (exclude beta/preview naming if present as separate apps).
+          local candidate
+          candidate="$(ls -d /Applications/Xcode_*.app 2>/dev/null | grep -v -iE 'beta|preview' | sort -V | tail -1 || true)"
           if [[ -z "$candidate" ]]; then
-            candidate="$(ls -d /Applications/Xcode*.app 2>/dev/null | sort -V | tail -1)"
+            candidate="$(ls -d /Applications/Xcode*.app 2>/dev/null | sort -V | tail -1 || true)"
           fi
-          if [[ -z "$candidate" ]]; then
+          echo "$candidate"
+        }
+
+        preferred_input="${{ inputs.preferred-version }}"
+        if [[ -n "$preferred_input" && -d "/Applications/${preferred_input}.app" ]]; then
+          selected="/Applications/${preferred_input}.app"
+          echo "Using preferred Xcode: $selected"
+        else
+          selected="$(pick_newest)"
+          if [[ -z "$selected" ]]; then
             echo "No Xcode.app found under /Applications" >&2
             exit 1
           fi
-          echo "Preferred ${{ inputs.preferred-version }} missing; using $candidate"
-          sudo xcode-select -s "$candidate/Contents/Developer"
+          if [[ -n "$preferred_input" ]]; then
+            echo "Preferred ${preferred_input} missing; using newest installed: $selected"
+          else
+            echo "Using newest installed Xcode: $selected"
+          fi
         fi
+
+        sudo xcode-select -s "$selected/Contents/Developer"
         # Warm CoreSimulator early (avoids flaky "Unable to connect to simulator").
         xcrun simctl list >/dev/null 2>&1 || true
         xcodebuild -version

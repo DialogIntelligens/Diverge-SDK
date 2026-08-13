@@ -56,12 +56,14 @@ runs:
           exit 0
         fi
 
-        # Prefer 16.4 (preinstalled sims on macos-15), then other installs newest-first.
-        if try_xcode /Applications/Xcode_16.4.app; then
-          exit 0
-        fi
+        # Newest installed Xcode first (stable Xcode_* before generic Xcode.app duplicates).
         while IFS= read -r app; do
-          [[ "$app" == /Applications/Xcode_16.4.app ]] && continue
+          if try_xcode "$app"; then
+            exit 0
+          fi
+        done < <(ls -d /Applications/Xcode_*.app 2>/dev/null | grep -v -iE 'beta|preview' | sort -V -r || true)
+
+        while IFS= read -r app; do
           if try_xcode "$app"; then
             exit 0
           fi
